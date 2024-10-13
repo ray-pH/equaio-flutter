@@ -58,21 +58,32 @@ class _ExpressionSequence extends State<ExpressionSequence> {
     var seq = widget.seq;
     List<(String, ExpressionWrapper)> history =
         seq == null ? [] : seq.getHistory();
-    List<Widget> expressionBlockWidgets = history.mapIndexed((i, entry) {
+    List<TableRow> expressionBlockTableRows = history.mapIndexed((i, entry) {
       var (_, expr) = entry;
-      var block = expressionToBlock(expr: expr);
-      return ClickableBlock(
-          block: block,
-          clickable: i == history.length - 1,
-          callback: (Address addr) {
-            addressHistory.add(addr);
-            if (seq != null) {
-              setState(() => possibleActions =
-                  seq.getPossibleActions(addrVec: addressHistory));
-            }
-          });
+      var (lhs, eq, rhs) = expressionToThreeBlocks(expr: expr);
+      
+      var clickable = i == history.length - 1;
+      void callback(Address addr) {
+        addressHistory.add(addr);
+        if (seq != null) {
+          setState(() => possibleActions =
+              seq.getPossibleActions(addrVec: addressHistory));
+        }
+      }
+      
+      var lhsWidget = lhs == null ? const SizedBox() : ClickableBlock(block: lhs, clickable: clickable, callback: callback);
+      var eqWidget = eq == null ? const SizedBox() : ClickableBlock(block: eq, clickable: clickable, callback: callback);
+      var rhsWidget = rhs == null ? const SizedBox() : ClickableBlock(block: rhs, clickable: clickable, callback: callback);
+      return TableRow(children: [ 
+        Align(alignment: Alignment.centerRight, child: lhsWidget),
+        eqWidget, 
+        Align(alignment: Alignment.centerLeft, child: rhsWidget),
+      ]);
     }).toList();
-    Widget expressionBlockWidget = Column(children: expressionBlockWidgets);
+    Widget expressionBlockWidget = Table(
+      defaultColumnWidth: const IntrinsicColumnWidth(),
+      children: expressionBlockTableRows
+    );
 
     List<Widget> possibleActionButtons =
         possibleActions.mapIndexed((index, entry) {

@@ -57,6 +57,23 @@ pub fn expression_to_block(expr: &ExpressionWrapper) -> Block {
 }
 
 #[flutter_rust_bridge::frb(sync)] 
+pub fn expression_to_three_blocks(expr: &ExpressionWrapper) -> (Option<Block>, Option<Block>, Option<Block>) {
+  use equaio::block::{Block, block_builder};
+  use equaio::expression::Address;
+  use equaio::address;
+  let expr = &expr.expr;
+  if let (Some(lhs), Some(rhs)) = (expr.lhs(), expr.rhs()) {
+    let lhs_block = Block::from_expression(lhs, address![0]).into();
+    let rhs_block = Block::from_expression(rhs, address![1]).into();
+    let eq_block  = block_builder::symbol(expr.symbol.clone(), address![]).into();
+    return (Some(lhs_block), Some(eq_block), Some(rhs_block));
+  } else {
+    let block = Block::from_expression(expr, address![]).into();
+    return (None, None, Some(block));
+  }
+}
+
+#[flutter_rust_bridge::frb(sync)] 
 pub fn init_algebra_worksheet(variables: Vec<String>) -> WorksheetWrapper {
   let mut ws = equaio::worksheet::Worksheet::new();
   let ctx = equaio::arithmetic::get_arithmetic_ctx().add_params(variables);
