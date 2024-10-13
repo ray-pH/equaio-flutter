@@ -1,0 +1,9 @@
+{
+  "name": "rust_lib_equaio",
+  "version": "0.1.0",
+  "files": [
+    "rust_lib_equaio_bg.wasm",
+    "rust_lib_equaio.js"
+  ],
+  "browser": "rust_lib_equaio.js"
+}
