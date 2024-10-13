@@ -37,17 +37,45 @@ pub struct WorkableExpressionSequenceWrapper {
   wseq: equaio::worksheet::WorkableExpressionSequence,
 }
 
+#[flutter_rust_bridge::frb(opaque)]
+pub struct ExpressionLine {
+  pub action: String,
+  pub expr: ExpressionWrapper,
+  pub label: Option<String>,
+  pub is_auto_generated: bool,
+}
+impl From<equaio::worksheet::ExpressionLine> for ExpressionLine {
+  fn from(line: equaio::worksheet::ExpressionLine) -> Self {
+    return ExpressionLine {
+      action: line.action.to_string(),
+      expr: line.expr.into(),
+      label: line.label,
+      is_auto_generated: line.is_auto_generated,
+    }
+  }
+}
+impl From<&equaio::worksheet::ExpressionLine> for ExpressionLine {
+  fn from(line: &equaio::worksheet::ExpressionLine) -> Self {
+    return ExpressionLine {
+      action: line.action.to_string(),
+      expr: line.expr.clone().into(),
+      label: line.label.clone(),
+      is_auto_generated: line.is_auto_generated,
+    }
+  }
+}
+
 #[flutter_rust_bridge::frb(sync)]
 pub fn generate_parsed_string(str: String) -> String {
   let ctx = equaio::arithmetic::get_arithmetic_ctx().add_param("x".to_string());
-  let expr = equaio::parser_prefix::to_expression(str, &ctx).unwrap();
+  let expr = equaio::parser::parser::to_expression(str, &ctx).unwrap();
   return expr.to_string(true);
 }
 
 #[flutter_rust_bridge::frb(sync)] 
 pub fn generate_expression(str: String) -> ExpressionWrapper {
   let ctx = equaio::arithmetic::get_arithmetic_ctx().add_param("x".to_string());
-  let expr = equaio::parser_prefix::to_expression(str, &ctx).unwrap();
+  let expr = equaio::parser::parser::to_expression(str, &ctx).unwrap();
   return ExpressionWrapper { expr };
 }
 
@@ -76,11 +104,12 @@ pub fn expression_to_three_blocks(expr: &ExpressionWrapper) -> (Option<Block>, O
 #[flutter_rust_bridge::frb(sync)] 
 pub fn init_algebra_worksheet(variables: Vec<String>) -> WorksheetWrapper {
   let mut ws = equaio::worksheet::Worksheet::new();
+  let algebra_rulestr = ruledefs::ALGEBRA;
+  let ruleset = equaio::rule::parse_ruleset_from_json(algebra_rulestr).unwrap();
   let ctx = equaio::arithmetic::get_arithmetic_ctx().add_params(variables);
   ws.set_expression_context(ctx);
   ws.set_normalization_function(|expr,ctx| expr.normalize_algebra(ctx));
-  let algebra_rulestr = ruledefs::ALGEBRA;
-  ws.set_rule_map(equaio::rule::parse_rulemap_from_json(&algebra_rulestr).unwrap());
+  ws.set_rule_map(ruleset.get_rule_map());
   ws.set_get_possible_actions_function(|expr,ctx,addr_vec| 
       equaio::algebra::get_possible_actions::algebra(expr,ctx,addr_vec));
   return WorksheetWrapper { ws };
@@ -99,8 +128,8 @@ impl WorksheetWrapper {
 }
 impl WorkableExpressionSequenceWrapper {
   #[flutter_rust_bridge::frb(sync)] 
-  pub fn get_history(&self) -> Vec<(String, ExpressionWrapper)> {
-    return self.wseq.history.iter().map(|(act,expr)| (act.to_string(), expr.clone().into())).collect();
+  pub fn get_history(&self) -> Vec<ExpressionLine> {
+    return self.wseq.history.iter().map(|l| l.into()).collect();
   }
   #[flutter_rust_bridge::frb(sync)] 
   pub fn get_possible_actions(&self, addr_vec: Vec<Address>) -> Vec<(String, ExpressionWrapper)> {

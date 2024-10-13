@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var worksheet = initAlgebraWorksheet(variables: ['x']);
-    worksheet.introduceExpression(expr: generateExpression(str: '=(+(x,3),5)'));
+    worksheet.introduceExpression(expr: generateExpression(str: 'x + 3 = 5'));
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(title: const Text('equaio')),
@@ -56,11 +56,10 @@ class _ExpressionSequence extends State<ExpressionSequence> {
   @override
   Widget build(BuildContext context) {
     var seq = widget.seq;
-    List<(String, ExpressionWrapper)> history =
+    List<ExpressionLine> history =
         seq == null ? [] : seq.getHistory();
-    List<TableRow> expressionBlockTableRows = history.mapIndexed((i, entry) {
-      var (_, expr) = entry;
-      var (lhs, eq, rhs) = expressionToThreeBlocks(expr: expr);
+    List<TableRow> expressionBlockTableRows = history.mapIndexed((i, line) {
+      var (lhs, eq, rhs) = expressionToThreeBlocks(expr: line.expr);
       
       var clickable = i == history.length - 1;
       void callback(Address addr) {
