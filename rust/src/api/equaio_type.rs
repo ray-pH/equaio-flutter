@@ -2,22 +2,22 @@ use equaio;
 
 #[derive(Clone, Debug, Eq, PartialEq, Default)]
 pub struct Address {
-  pub path: Vec<usize>,
-  pub sub: Option<usize>, // sub if for addressing subexpression in AssocTrain
+  pub path: Vec<i32>,
+  pub sub: Option<i32>, // sub if for addressing subexpression in AssocTrain
 }
 impl From<equaio::expression::Address> for Address {
   fn from(address: equaio::expression::Address) -> Self {
     return Address {
-      path: address.path,
-      sub: address.sub,
+      path: address.path.iter().map(|i| *i as i32).collect(),
+      sub: address.sub.map(|i| i as i32),
     }
   }
 }
 impl From<Address> for equaio::expression::Address {
   fn from(address: Address) -> Self {
     return equaio::expression::Address {
-      path: address.path,
-      sub: address.sub,
+      path: address.path.iter().map(|i| *i as usize).collect(),
+      sub: address.sub.map(|i| i as usize),
     }
   }
 }
