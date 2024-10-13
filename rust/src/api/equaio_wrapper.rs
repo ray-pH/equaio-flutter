@@ -37,7 +37,6 @@ pub struct WorkableExpressionSequenceWrapper {
   wseq: equaio::worksheet::WorkableExpressionSequence,
 }
 
-#[flutter_rust_bridge::frb(opaque)]
 pub struct ExpressionLine {
   pub action: String,
   pub expr: ExpressionWrapper,

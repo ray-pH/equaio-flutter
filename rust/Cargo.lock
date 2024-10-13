@@ -209,7 +209,7 @@ dependencies = [
 [[package]]
 name = "equaio"
 version = "0.1.0"
-source = "git+https://github.com/ray-pH/libequaio?branch=main#104ef274fc421a729dfa903ed0572a5bd14942ac"
+source = "git+https://github.com/ray-pH/libequaio?branch=main#919eabcc40d4d6c8d9ed312dedce478aa572f115"
 dependencies = [
  "lazy_static",
  "regex",
