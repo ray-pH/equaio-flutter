@@ -60,8 +60,9 @@ class _ExpressionSequence extends State<ExpressionSequence> {
         seq == null ? [] : seq.getHistory();
     List<Widget> expressionBlockWidgets = history.mapIndexed((i, entry) {
       var (_, expr) = entry;
-      return ExpressionBlock(
-          expr: expr,
+      var block = expressionToBlock(expr: expr);
+      return ClickableBlock(
+          block: block,
           clickable: i == history.length - 1,
           callback: (Address addr) {
             addressHistory.add(addr);
@@ -101,23 +102,21 @@ class _ExpressionSequence extends State<ExpressionSequence> {
   }
 }
 
-class ExpressionBlock extends StatefulWidget {
-  final ExpressionWrapper expr;
+class ClickableBlock extends StatefulWidget {
+  final Block block;
   final bool clickable;
   final void Function(Address)? callback;
-  const ExpressionBlock(
-      {required this.expr, required this.clickable, this.callback, super.key});
+  const ClickableBlock(
+      {required this.block, required this.clickable, this.callback, super.key});
   @override
-  State<ExpressionBlock> createState() => _ExpressionBlock();
+  State<ClickableBlock> createState() => _ClickableBlock();
 }
-
-class _ExpressionBlock extends State<ExpressionBlock> {
+class _ClickableBlock extends State<ClickableBlock> {
   @override
   Widget build(BuildContext context) {
-    var block = expressionToBlock(expr: widget.expr);
-    return generateBlock(block);
+    return generateBlock(widget.block);
   }
-
+  
   Widget generateBlock(Block block) {
     switch (block.blockType) {
       case BlockType.symbol:
@@ -166,6 +165,7 @@ class _PossibleActionButton extends State<PossibleActionButton> {
 
   @override
   Widget build(BuildContext context) {
+    var block = expressionToBlock(expr: widget.expr);
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
@@ -180,7 +180,7 @@ class _PossibleActionButton extends State<PossibleActionButton> {
                 child: Text(widget.actionStr)),
             Container(
                 padding: const EdgeInsets.all(8),
-                child: ExpressionBlock(expr: widget.expr, clickable: false))
+                child: ClickableBlock(block: block, clickable: false))
           ],
         ),
         // child: AnimatedContainer(
