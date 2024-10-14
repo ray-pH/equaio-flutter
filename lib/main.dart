@@ -12,9 +12,21 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       title: 'Equaio',
-      home: MainMenu(),
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          // seedColor: const Color(0xFFEF7B45),
+          // primary: const Color(0xFFEF7B45),
+          // seedColor: const Color(0xFFFF6600),
+          // primary: const Color(0xFFFF6600),
+          // seedColor: const Color(0xFFE4552C),
+          // primary: const Color(0xFFE4552C),
+          seedColor: const Color(0xFFF06A31),
+          primary: const Color(0xFFF06A31),
+        ),    
+      ),
+      home: const MainMenu(),
     );
   }
 }

@@ -3,12 +3,65 @@ import 'package:collection/collection.dart';
 import 'package:equaio/src/rust/api/equaio_wrapper.dart';
 import 'package:equaio/src/rust/api/equaio_type.dart';
 
+class WorksheetData {
+  final String rule;
+  final String label;
+  final String? sublabel;
+  final List<String> variables;
+  final List<String> initialExpressions;
+  const WorksheetData(
+      {required this.label,
+      this.sublabel,
+      required this.rule,
+      required this.variables,
+      required this.initialExpressions});
+}
+
+class Category {
+  final String name;
+  final List<WorksheetData> worksheet;
+  const Category({required this.name, required this.worksheet});
+}
+
+class WorksheetContainer extends StatefulWidget {
+  final WorksheetData worksheetData;
+  const WorksheetContainer({required this.worksheetData, super.key});
+  @override
+  State<WorksheetContainer> createState() => _WorksheetContainer();
+}
+
+class _WorksheetContainer extends State<WorksheetContainer> {
+  @override
+  Widget build(BuildContext context) {
+    var ws = initWorksheet(widget.worksheetData);
+    return Scaffold(
+      appBar: AppBar(title: Text(widget.worksheetData.label)),
+      body: Center(child: Worksheet(worksheet: ws)),
+    );
+  }
+
+  WorksheetWrapper initWorksheet(WorksheetData data) {
+    var worksheet = initAlgebraWorksheet(variables: data.variables);
+    for (final expr in data.initialExpressions) {
+      // TODO: check for null
+      worksheet.introduceExpression(expr: generateExpression(str: expr));
+    }
+    return worksheet;
+    // worksheet.introduceExpression(expr: generateExpression(str: 'x + 3 = 5'));
+    // TODO: properly initialize worksheet
+    // switch (data.rule) {
+    //   case 'algebra':
+    // }
+  }
+}
+
 class Worksheet extends StatefulWidget {
   final WorksheetWrapper worksheet;
   const Worksheet({required this.worksheet, super.key});
   @override
   State<Worksheet> createState() => _Worksheet();
 }
+
 class _Worksheet extends State<Worksheet> {
   @override
   Widget build(BuildContext context) {
@@ -24,6 +77,7 @@ class ExpressionSequence extends StatefulWidget {
   @override
   State<ExpressionSequence> createState() => _ExpressionSequence();
 }
+
 class _ExpressionSequence extends State<ExpressionSequence> {
   List<Address> addressHistory = [];
   List<(String, ExpressionWrapper)> possibleActions = [];
@@ -32,11 +86,10 @@ class _ExpressionSequence extends State<ExpressionSequence> {
   @override
   Widget build(BuildContext context) {
     var seq = widget.seq;
-    List<ExpressionLine> history =
-        seq == null ? [] : seq.getHistory();
+    List<ExpressionLine> history = seq == null ? [] : seq.getHistory();
     List<TableRow> expressionBlockTableRows = history.mapIndexed((i, line) {
       var (lhs, eq, rhs) = expressionToThreeBlocks(expr: line.expr);
-      
+
       var clickable = i == history.length - 1;
       void callback(Address addr) {
         addressHistory.add(addr);
@@ -45,20 +98,27 @@ class _ExpressionSequence extends State<ExpressionSequence> {
               seq.getPossibleActions(addrVec: addressHistory));
         }
       }
-      
-      var lhsWidget = lhs == null ? const SizedBox() : ClickableBlock(block: lhs, clickable: clickable, callback: callback);
-      var eqWidget = eq == null ? const SizedBox() : ClickableBlock(block: eq, clickable: clickable, callback: callback);
-      var rhsWidget = rhs == null ? const SizedBox() : ClickableBlock(block: rhs, clickable: clickable, callback: callback);
-      return TableRow(children: [ 
+
+      var lhsWidget = lhs == null
+          ? const SizedBox()
+          : ClickableBlock(
+              block: lhs, clickable: clickable, callback: callback);
+      var eqWidget = eq == null
+          ? const SizedBox()
+          : ClickableBlock(block: eq, clickable: clickable, callback: callback);
+      var rhsWidget = rhs == null
+          ? const SizedBox()
+          : ClickableBlock(
+              block: rhs, clickable: clickable, callback: callback);
+      return TableRow(children: [
         Align(alignment: Alignment.centerRight, child: lhsWidget),
-        eqWidget, 
+        eqWidget,
         Align(alignment: Alignment.centerLeft, child: rhsWidget),
       ]);
     }).toList();
     Widget expressionBlockWidget = Table(
-      defaultColumnWidth: const IntrinsicColumnWidth(),
-      children: expressionBlockTableRows
-    );
+        defaultColumnWidth: const IntrinsicColumnWidth(),
+        children: expressionBlockTableRows);
 
     List<Widget> possibleActionButtons =
         possibleActions.mapIndexed((index, entry) {
@@ -97,12 +157,13 @@ class ClickableBlock extends StatefulWidget {
   @override
   State<ClickableBlock> createState() => _ClickableBlock();
 }
+
 class _ClickableBlock extends State<ClickableBlock> {
   @override
   Widget build(BuildContext context) {
     return generateBlock(widget.block);
   }
-  
+
   Widget generateBlock(Block block) {
     switch (block.blockType) {
       case BlockType.symbol:
@@ -145,6 +206,7 @@ class PossibleActionButton extends StatefulWidget {
   @override
   State<PossibleActionButton> createState() => _PossibleActionButton();
 }
+
 class _PossibleActionButton extends State<PossibleActionButton> {
   bool _isHovered = false;
 
@@ -200,6 +262,7 @@ class BlockButton extends StatefulWidget {
   @override
   State<BlockButton> createState() => _BlockButton();
 }
+
 class _BlockButton extends State<BlockButton> {
   bool _isHovered = false;
 
