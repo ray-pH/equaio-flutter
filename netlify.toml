@@ -1,0 +1,14 @@
+[build]
+  publish = "build/web"
+  command = "bash ./netlify_build.sh"
+
+[[plugins]]
+  package = "netlify-plugin-flutter"
+  [plugins.inputs]
+    channel = "stable"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Cross-Origin-Opener-Policy = "same-origin"
+    Cross-Origin-Embedder-Policy = "require-corp"
