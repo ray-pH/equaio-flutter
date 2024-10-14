@@ -27,15 +27,15 @@ const RESOURCES = {"flutter.js": "f393d3c16b631f36852323de8e583132",
 "canvaskit/skwasm.wasm": "9f0c0c02b82a910d12ce0543ec130e60",
 "canvaskit/skwasm.worker.js": "89990e8c92bcb123999aa81f7e203b1c",
 "pkg/package.json": "c66e089c262e1fdf0637e06445ae4a76",
-"pkg/rust_lib_equaio_bg.wasm": "46ea5a0d3b87add11463310b8c350b3f",
-"pkg/rust_lib_equaio.js": "c6ee45fd73e1b2172cd785a9207a5712",
+"pkg/rust_lib_equaio_bg.wasm": "0eeb93264cad92b6b135920f330fb1cf",
+"pkg/rust_lib_equaio.js": "1c240b1a43b613a445ec0600b5a454e6",
 "icons/Icon-maskable-192.png": "c457ef57daa1d16f64b27b786ec2ea3c",
 "icons/Icon-192.png": "ac9a721a12bbc803b44f645561ecb1e1",
 "icons/Icon-512.png": "96e752610906ba2a93c65f8abe1645f1",
 "icons/Icon-maskable-512.png": "301a7604d45b3e739efc881eb04896ea",
 "favicon.png": "5dcef449791fa27946b3d35ad8803796",
 "version.json": "c156a00f9e441b0b69781a275bae8d5f",
-"flutter_bootstrap.js": "331e84444895a232bf4789f96450716d"};
+"flutter_bootstrap.js": "958c5dedc66a3fa9e343d3a7fc4f4b6d"};
 // The application shell files that are downloaded before a service worker can
 // start.
 const CORE = ["main.dart.js",

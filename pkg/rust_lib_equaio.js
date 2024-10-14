@@ -7,6 +7,12 @@ let wasm_bindgen;
     }
     let wasm = undefined;
 
+    function _assertBoolean(n) {
+        if (typeof(n) !== 'boolean') {
+            throw new Error(`expected a boolean argument, found ${typeof(n)}`);
+        }
+    }
+
     function isLikeNone(x) {
         return x === undefined || x === null;
     }
@@ -40,12 +46,6 @@ let wasm_bindgen;
     function getStringFromWasm0(ptr, len) {
         ptr = ptr >>> 0;
         return cachedTextDecoder.decode(getUint8ArrayMemory0().slice(ptr, ptr + len));
-    }
-
-    function _assertBoolean(n) {
-        if (typeof(n) !== 'boolean') {
-            throw new Error(`expected a boolean argument, found ${typeof(n)}`);
-        }
     }
 
     let WASM_VECTOR_LEN = 0;
@@ -216,13 +216,13 @@ function logError(f, args) {
 function __wbg_adapter_32(arg0, arg1, arg2) {
     _assertNum(arg0);
     _assertNum(arg1);
-    wasm.closure91_externref_shim(arg0, arg1, arg2);
+    wasm.closure110_externref_shim(arg0, arg1, arg2);
 }
 
 function __wbg_adapter_35(arg0, arg1, arg2) {
     _assertNum(arg0);
     _assertNum(arg1);
-    wasm.closure134_externref_shim(arg0, arg1, arg2);
+    wasm.closure135_externref_shim(arg0, arg1, arg2);
 }
 
 /**
@@ -339,6 +339,24 @@ __exports.rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_gene
     wasm.rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWorksheetWrapper(ptr);
 };
 
+function takeFromExternrefTable0(idx) {
+    const value = wasm.__wbindgen_export_3.get(idx);
+    wasm.__externref_table_dealloc(idx);
+    return value;
+}
+/**
+ * # Safety
+ *
+ * This should never be called manually.
+ * @param {any} handle
+ * @param {any} dart_handler_port
+ * @returns {number}
+ */
+__exports.dart_opaque_dart2rust_encode = function(handle, dart_handler_port) {
+    const ret = wasm.dart_opaque_dart2rust_encode(handle, dart_handler_port);
+    return ret >>> 0;
+};
+
 function addToExternrefTable0(obj) {
     const idx = wasm.__externref_table_alloc();
     wasm.__wbindgen_export_3.set(idx, obj);
@@ -384,12 +402,6 @@ function passArrayJsValueToWasm0(array, malloc) {
     WASM_VECTOR_LEN = array.length;
     return ptr;
 }
-
-function takeFromExternrefTable0(idx) {
-    const value = wasm.__wbindgen_export_3.get(idx);
-    wasm.__externref_table_dealloc(idx);
-    return value;
-}
 /**
  * ## Safety
  * This function reclaims a raw pointer created by [`TransferClosure`], and therefore
@@ -407,19 +419,6 @@ __exports.receive_transfer_closure = function(payload, transfer) {
     if (ret[1]) {
         throw takeFromExternrefTable0(ret[0]);
     }
-};
-
-/**
- * # Safety
- *
- * This should never be called manually.
- * @param {any} handle
- * @param {any} dart_handler_port
- * @returns {number}
- */
-__exports.dart_opaque_dart2rust_encode = function(handle, dart_handler_port) {
-    const ret = wasm.dart_opaque_dart2rust_encode(handle, dart_handler_port);
-    return ret >>> 0;
 };
 
 const WorkerPoolFinalization = (typeof FinalizationRegistry === 'undefined')
@@ -502,12 +501,16 @@ async function __wbg_load(module, imports) {
 function __wbg_get_imports() {
     const imports = {};
     imports.wbg = {};
-    imports.wbg.__wbg_log_3aabf7adafeda50f = function() { return logError(function (arg0, arg1) {
-        console.log(getStringFromWasm0(arg0, arg1));
-    }, arguments) };
-    imports.wbg.__wbg_error_ed81bf5985e334c9 = function() { return logError(function (arg0, arg1) {
-        console.error(getStringFromWasm0(arg0, arg1));
-    }, arguments) };
+    imports.wbg.__wbindgen_cb_drop = function(arg0) {
+        const obj = arg0.original;
+        if (obj.cnt-- == 1) {
+            obj.a = 0;
+            return true;
+        }
+        const ret = false;
+        _assertBoolean(ret);
+        return ret;
+    };
     imports.wbg.__wbindgen_number_get = function(arg0, arg1) {
         const obj = arg1;
         const ret = typeof(obj) === 'number' ? obj : undefined;
@@ -546,16 +549,12 @@ function __wbg_get_imports() {
     imports.wbg.__wbg_postMessage_4b03ef3c6e58db4c = function() { return handleError(function (arg0, arg1) {
         arg0.postMessage(arg1);
     }, arguments) };
-    imports.wbg.__wbindgen_cb_drop = function(arg0) {
-        const obj = arg0.original;
-        if (obj.cnt-- == 1) {
-            obj.a = 0;
-            return true;
-        }
-        const ret = false;
-        _assertBoolean(ret);
-        return ret;
-    };
+    imports.wbg.__wbg_log_3aabf7adafeda50f = function() { return logError(function (arg0, arg1) {
+        console.log(getStringFromWasm0(arg0, arg1));
+    }, arguments) };
+    imports.wbg.__wbg_error_ed81bf5985e334c9 = function() { return logError(function (arg0, arg1) {
+        console.error(getStringFromWasm0(arg0, arg1));
+    }, arguments) };
     imports.wbg.__wbindgen_is_undefined = function(arg0) {
         const ret = arg0 === undefined;
         _assertBoolean(ret);
@@ -770,12 +769,12 @@ function __wbg_get_imports() {
         const ret = wasm.memory;
         return ret;
     };
-    imports.wbg.__wbindgen_closure_wrapper3279 = function() { return logError(function (arg0, arg1, arg2) {
-        const ret = makeMutClosure(arg0, arg1, 92, __wbg_adapter_32);
+    imports.wbg.__wbindgen_closure_wrapper2615 = function() { return logError(function (arg0, arg1, arg2) {
+        const ret = makeMutClosure(arg0, arg1, 111, __wbg_adapter_32);
         return ret;
     }, arguments) };
-    imports.wbg.__wbindgen_closure_wrapper3792 = function() { return logError(function (arg0, arg1, arg2) {
-        const ret = makeMutClosure(arg0, arg1, 135, __wbg_adapter_35);
+    imports.wbg.__wbindgen_closure_wrapper3791 = function() { return logError(function (arg0, arg1, arg2) {
+        const ret = makeMutClosure(arg0, arg1, 136, __wbg_adapter_35);
         return ret;
     }, arguments) };
     imports.wbg.__wbindgen_init_externref_table = function() {
